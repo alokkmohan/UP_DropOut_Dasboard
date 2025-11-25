@@ -12,7 +12,7 @@ from io import StringIO
 # File link example: https://drive.google.com/file/d/1-eQAWfoNyAijKUtVOJDwI-xxxxxxxxx/view?usp=sharing
 # Extract FILE_ID from your particular Google Drive file
 
-CSV_FILE_ID = "PASTE_YOUR_FILE_ID_HERE"  # CHANGE THIS to your real file-id, see below
+CSV_FILE_ID = "1WKRqYOpH0R2LWjYBkvM9RV3V-XC2RinC"  # CHANGE THIS to your real file-id, see below
 CSV_LOCAL_PATH = "Master_UP_Dropout_Database.csv"
 
 def download_from_gdrive(file_id, dest_path):
