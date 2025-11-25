@@ -3,7 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import requests
-from io import StringIO
+from io import BytesIO, StringIO
+import zipfile
 
 # Page config
 st.set_page_config(
@@ -23,6 +24,33 @@ st.markdown("""
 
 # Load data from URL
 @st.cache_data(show_spinner=False)
+def load_csv_from_github_zip(url):
+    """Load CSV from GitHub releases ZIP file"""
+    try:
+        # Download ZIP file
+        response = requests.get(url, allow_redirects=True)
+        response.raise_for_status()
+        
+        # Extract ZIP
+        zip_file = zipfile.ZipFile(BytesIO(response.content))
+        
+        # Get CSV file name (first CSV in ZIP)
+        csv_files = [f for f in zip_file.namelist() if f.endswith('.csv')]
+        
+        if not csv_files:
+            st.error("No CSV file found in ZIP")
+            return None
+        
+        # Read CSV
+        with zip_file.open(csv_files[0]) as csv_file:
+            df = pd.read_csv(csv_file, low_memory=False)
+        
+        return df
+    except Exception as e:
+        st.error(f"Error loading ZIP file: {str(e)}")
+        return None
+
+@st.cache_data(show_spinner=False)
 def load_csv_from_gdrive(file_id):
     """Load CSV from Google Drive"""
     try:
@@ -38,6 +66,7 @@ def load_csv_from_gdrive(file_id):
         return None
 
 # Configuration
+GITHUB_RELEASE_ZIP_URL = "https://github.com/alokkmohan/UP_DropOut_Dasboard/releases/download/v1.0/Master_UP_Dropout_Database.zip"
 GDRIVE_FILE_ID = "1Tx1hhTgF3BRVSSdhyEuxXF3x2XbimT6b"
 
 # Header
@@ -48,8 +77,14 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Auto-load data
 df = None
 
-with st.spinner("📥 Loading data from Google Drive... Please wait (1-2 minutes for 1+ crore records)"):
-    df = load_csv_from_gdrive(GDRIVE_FILE_ID)
+with st.spinner("📥 Loading data from GitHub... Please wait (1-2 minutes for 387MB ZIP file)"):
+    # Try GitHub releases first
+    df = load_csv_from_github_zip(GITHUB_RELEASE_ZIP_URL)
+    
+    # If GitHub fails, try Google Drive
+    if df is None:
+        st.info("GitHub failed, trying Google Drive...")
+        df = load_csv_from_gdrive(GDRIVE_FILE_ID)
 
 # If data load failed, show upload option
 if df is None:
