@@ -56,15 +56,28 @@ if df is None:
     st.error("❌ Failed to load data from Google Drive")
     st.info("Please check your internet connection and try refreshing the page")
     st.stop()
-else:
-    st.sidebar.success(f"✅ Loaded {len(df):,} records")
+
+# Check if required columns exist
+required_columns = ['District Name', 'Academic Year', 'Education Level', 'Gender', 'Management Type Label']
+missing_columns = [col for col in required_columns if col not in df.columns]
+
+if missing_columns:
+    st.error(f"❌ Missing required columns: {', '.join(missing_columns)}")
+    st.info("Available columns: " + ", ".join(df.columns.tolist()[:10]))
+    st.stop()
+
+st.sidebar.success(f"✅ Loaded {len(df):,} records")
 
 # Filters
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🎛️ Filters")
 
 # District filter
-districts = ['All'] + sorted(df['District Name'].unique().tolist())
+try:
+    districts = ['All'] + sorted(df['District Name'].unique().tolist())
+except Exception as e:
+    st.error(f"Error in District filter: {str(e)}")
+    districts = ['All']
 selected_district = st.sidebar.selectbox("District:", districts)
 
 # Academic Year
