@@ -62,10 +62,19 @@ con = duckdb.connect()
 csv_file = "Master_UP_Dropout_Database.csv"
 
 # Check if CSV exists
+import gdown
+
+# Check if CSV exists, else download from Google Drive
 if not os.path.exists(csv_file):
-    st.error(f"❌ CSV file not found: {csv_file}")
-    st.info("Please ensure Master_UP_Dropout_Database.csv is in the same directory")
-    st.stop()
+    st.warning("Master_UP_Dropout_Database.csv फाइल नहीं मिली, अभी डाउनलोड की जा रही है...")
+    file_id = "1WKRqYOpH0R2LWjYBkvM9RV3V-XC2RinC"
+    url = f"https://drive.google.com/uc?id={file_id}"
+    try:
+        gdown.download(url, csv_file, quiet=False)
+        st.success("CSV सफलतापूर्वक डाउनलोड हो गई!")
+    except Exception as e:
+        st.error(f"❌ Google Drive से फाइल डाउनलोड नहीं हो पाई: {e}")
+        st.stop()
 
 # Get years
 available_years = [col for col in df_edu.columns if col != 'Education Level']
