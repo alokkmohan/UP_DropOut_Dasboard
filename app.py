@@ -67,7 +67,7 @@ import gdown
 # Check if CSV exists, else download from Google Drive
 if not os.path.exists(csv_file):
     st.warning("Master_UP_Dropout_Database.csv फाइल नहीं मिली, अभी डाउनलोड की जा रही है...")
-    file_id = "1WKRqYOpH0R2LWjYBkvM9RV3V-XC2RinC"
+    file_id = "1Tx1hhTgF3BRVSSdhyEuxXF3x2XbimT6b"
     url = f"https://drive.google.com/uc?id={file_id}"
     try:
         gdown.download(url, csv_file, quiet=False)
