@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import duckdb
 import os
 
-st.set_page_config(page_title="UP Dropout Dashboard", layout="wide")
+st.set_page_config(page_title="UP Dropout Analysis", layout="wide")
 
 # Custom CSS
 st.markdown("""
@@ -38,7 +38,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<h1 class="main-title">🎓 UP शिक्षा विभाग - Dropout Dashboard</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">UP Dropout Analysis</h1>', unsafe_allow_html=True)
 
 # Load data files
 @st.cache_data
@@ -66,7 +66,7 @@ import gdown
 
 # Check if CSV exists, else download from Google Drive
 if not os.path.exists(csv_file):
-    st.warning("Master_UP_Dropout_Database.csv फाइल नहीं मिली, अभी डाउनलोड की जा रही है...")
+    st.warning("Master_UP_Dropout_Database.csv फाइल अभी डाउनलोड की जा रही है...")
     file_id = "1Tx1hhTgF3BRVSSdhyEuxXF3x2XbimT6b"
     url = f"https://drive.google.com/uc?id={file_id}"
     try:
@@ -1210,7 +1210,7 @@ elif st.session_state.active_tab == 3:
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
 <div style='text-align: center; color: white; padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 10px;'>
-    <p style='font-size: 1.1rem; margin: 0;'>🎓 उत्तर प्रदेश शिक्षा विभाग | UP Education Department</p>
-    <p style='font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;'>Dashboard powered by DuckDB & Streamlit</p>
+    <p style='font-size: 1.1rem; margin: 0;'> Educate Girls</p>
+    <p style='font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;'>Dashboard powered by Alok Mohan</p>
 </div>
 """, unsafe_allow_html=True)
