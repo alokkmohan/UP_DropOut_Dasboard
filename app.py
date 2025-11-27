@@ -136,24 +136,24 @@ def ensure_csv_available():
 
     # Streamlit secrets may contain KAGGLE_USERNAME & KAGGLE_KEY or KAGGLE_API_TOKEN
     try:
-        kaggle_user = st.secrets.get("KAGGLE_USERNAME")
-        kaggle_key = st.secrets.get("KAGGLE_KEY")
+        kaggle_user = st.secrets.get("alokkmohan")
+        kaggle_key = st.secrets.get("KGAT_17ce0406750ab83eefc0b8244dca6adf")
     except Exception:
         kaggle_user = None
         kaggle_key = None
 
     try:
-        kaggle_api_token = st.secrets.get("KAGGLE_API_TOKEN")
+        kaggle_api_token = st.secrets.get("kaggle competitions list")
     except Exception:
         kaggle_api_token = None
 
     # fallback to environment variables (if set)
     if not kaggle_user:
-        kaggle_user = os.environ.get("KAGGLE_USERNAME")
+        kaggle_user = os.environ.get("alokkmohan")
     if not kaggle_key:
-        kaggle_key = os.environ.get("KAGGLE_KEY")
+        kaggle_key = os.environ.get("KGAT_17ce0406750ab83eefc0b8244dca6adf")
     if not kaggle_api_token:
-        kaggle_api_token = os.environ.get("KAGGLE_API_TOKEN")
+        kaggle_api_token = os.environ.get("kaggle competitions list")
 
     # If username/key present, write kaggle.json so KaggleApi can use it
     if kaggle_user and kaggle_key:
