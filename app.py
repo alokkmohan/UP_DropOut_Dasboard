@@ -26,30 +26,35 @@ def download_kaggle_dataset():
         api = KaggleApi()
         api.authenticate()
         
-        # Download dataset
+        # Download dataset silently
         dataset_name = st.secrets.get("KAGGLE_DATASET", "alokkmohan/dropout")
-        
-        st.info(f"📥 Downloading dataset from Kaggle: {dataset_name}")
         api.dataset_download_files(dataset_name, path='.', unzip=True)
-        st.success("✅ Dataset downloaded successfully!")
         
         return True
     except Exception as e:
-        st.error(f"❌ Error downloading from Kaggle: {e}")
-        st.info("💡 Make sure you have set KAGGLE_USERNAME, KAGGLE_KEY, and KAGGLE_DATASET in Streamlit secrets")
+        st.error(f"❌ Error loading data from source: {e}")
         return False
 
 # Check if CSV exists locally, if not download from Kaggle
 csv_file = "Master_UP_Dropout_Database.csv"
 if not os.path.exists(csv_file):
-    st.warning("⚠️ CSV file not found locally. Attempting to download from Kaggle...")
-    download_kaggle_dataset()
+    # Create a compact loading container
+    loading_container = st.container()
+    with loading_container:
+        with st.spinner("🔄 Loading dashboard data... Please wait..."):
+            download_success = download_kaggle_dataset()
     
     # Check again after download
     if not os.path.exists(csv_file):
-        st.error(f"❌ CSV file still not found: {csv_file}")
-        st.info("Please ensure the dataset is uploaded to Kaggle and secrets are configured correctly")
+        st.error(f"❌ Dataset could not be loaded. Please contact administrator.")
         st.stop()
+    else:
+        # Clear the loading message and show brief success
+        loading_container.empty()
+        success_msg = st.success("✅ Dashboard ready!")
+        import time
+        time.sleep(2)
+        success_msg.empty()
 
 # Custom CSS
 st.markdown("""
