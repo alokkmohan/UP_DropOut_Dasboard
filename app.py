@@ -19,12 +19,15 @@ def download_kaggle_dataset():
         os.environ['KAGGLE_USERNAME'] = st.secrets["KAGGLE_USERNAME"]
         os.environ['KAGGLE_KEY'] = st.secrets["KAGGLE_KEY"]
         
+        # Fix User-Agent issue
+        os.environ['KAGGLE_USER_AGENT'] = 'streamlit-app'
+        
         # Initialize Kaggle API
         api = KaggleApi()
         api.authenticate()
         
-        # Download dataset (replace with your actual dataset path)
-        dataset_name = st.secrets.get("KAGGLE_DATASET", "your-username/your-dataset-name")
+        # Download dataset
+        dataset_name = st.secrets.get("KAGGLE_DATASET", "alokkmohan/dropout")
         
         st.info(f"📥 Downloading dataset from Kaggle: {dataset_name}")
         api.dataset_download_files(dataset_name, path='.', unzip=True)
