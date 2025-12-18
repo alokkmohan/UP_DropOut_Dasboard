@@ -1142,44 +1142,33 @@ if st.session_state.active_tab == 0:
             st.error(f"Error loading gender chart: {e}")
     
     with viz_col2:
-        # Social Category Distribution (SC/ST/OBC/General)
+        # Education Level Distribution
         try:
-            import pandas as pd
-            caste_csv = "UP_Dropout_Rate_by_Caste.csv"
+            level_query = f'''
+                SELECT 
+                    "Education Level",
+                    COUNT(*) as student_count
+                FROM df
+                WHERE "Academic Year" = '{selected_year}'
+                GROUP BY "Education Level"
+                ORDER BY student_count DESC
+            '''
+            level_df = duckdb.query(level_query).to_df()
             
-            # Read the caste data
-            caste_df = pd.read_csv(caste_csv, skiprows=1)
-            caste_df.columns = ['Year', 'General_Upe', 'OBC_Upe', 'SC_Upe', 'ST_Upe', 'General_Sec', 'OBC_Sec', 'SC_Sec', 'ST_Sec']
-            
-            # Get data for selected year (use 2023-24 as default if not available)
-            year_map = {'2020-21': '2020-21', '2021-22': '2021-22', '2022-23': '2022-23', '2023-24': '2023-24', '2024-25': '2023-24', '2025-26': '2025-26'}
-            mapped_year = year_map.get(selected_year, '2023-24')
-            
-            year_data = caste_df[caste_df['Year'] == mapped_year]
-            
-            if not year_data.empty:
-                # Combine both levels for overall distribution
-                categories = ['General', 'OBC', 'SC', 'ST']
-                values = [
-                    float(year_data['General_Upe'].values[0]) + float(year_data['General_Sec'].values[0]),
-                    float(year_data['OBC_Upe'].values[0]) + float(year_data['OBC_Sec'].values[0]),
-                    float(year_data['SC_Upe'].values[0]) + float(year_data['SC_Sec'].values[0]),
-                    float(year_data['ST_Upe'].values[0]) + float(year_data['ST_Sec'].values[0])
-                ]
-                
-                fig_social = go.Figure(data=[go.Pie(
-                    labels=categories,
-                    values=values,
+            if not level_df.empty:
+                fig_level = go.Figure(data=[go.Pie(
+                    labels=level_df['Education Level'],
+                    values=level_df['student_count'],
                     hole=0.5,
-                    marker=dict(colors=['#2ecc71', '#3498db', '#e74c3c', '#f39c12']),
+                    marker=dict(colors=['#2ecc71', '#3498db', '#e74c3c', '#f39c12', '#9b59b6']),
                     textinfo='label+percent',
                     textfont=dict(size=14, color='white', family='Arial Black'),
-                    hovertemplate='<b>%{label}</b><br>Dropout Rate: %{value:.2f}%<extra></extra>'
+                    hovertemplate='<b>%{label}</b><br>Students: %{value}<br>%{percent}<extra></extra>'
                 )])
                 
-                fig_social.update_layout(
+                fig_level.update_layout(
                     title=dict(
-                        text=f"Social Category Dropout Rate ({mapped_year})",
+                        text=f"Education Level Distribution ({selected_year})",
                         x=0.5,
                         xanchor='center',
                         font=dict(size=18, color='white', family='Arial Black')
@@ -1191,11 +1180,11 @@ if st.session_state.active_tab == 0:
                     height=400
                 )
                 
-                st.plotly_chart(fig_social, use_container_width=True, config={'displayModeBar': False})
+                st.plotly_chart(fig_level, use_container_width=True, config={'displayModeBar': False})
             else:
-                st.info(f"No caste data available for {selected_year}")
+                st.info(f"No education level data available for {selected_year}")
         except Exception as e:
-            st.error(f"Error loading social category chart: {e}")
+            st.error(f"Error loading education level chart: {e}")
     
     st.markdown("<br>", unsafe_allow_html=True)
     
